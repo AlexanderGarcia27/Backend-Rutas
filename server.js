@@ -1,11 +1,22 @@
 const express = require('express');
 const nodemailer = require('nodemailer');
 const admin = require('firebase-admin');
-const db = admin.firestore();
 const cors = require('cors');
 const app = express();
+
 app.use(express.json());
 app.use(cors());
+
+// INICIALIZA FIREBASE ADMIN ANTES DE USAR FIRESTORE
+if (!admin.apps.length) {
+  admin.initializeApp({
+    credential: admin.credential.applicationDefault()
+    // O usa tu archivo de servicio:
+    // credential: admin.credential.cert(require('./serviceAccountKey.json'))
+  });
+}
+
+const db = admin.firestore();
 
 app.post('/alerta-desvio', async (req, res) => {
   const { emailDestino, emailOrigen, ubicacionActual } = req.body;
