@@ -8,11 +8,10 @@ app.use(express.json());
 app.use(cors());
 
 // INICIALIZA FIREBASE ADMIN ANTES DE USAR FIRESTORE
+const serviceAccount = require('/etc/secrets/serviceAccountKey.json');
 if (!admin.apps.length) {
   admin.initializeApp({
-    credential: admin.credential.applicationDefault()
-    // O usa tu archivo de servicio:
-    // credential: admin.credential.cert(require('./serviceAccountKey.json'))
+    credential: admin.credential.cert(serviceAccount)
   });
 }
 
