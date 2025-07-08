@@ -45,12 +45,21 @@ app.post('/alerta-desvio', async (req, res) => {
 
 app.post('/ruta/concluir', async (req, res) => {
   const { id } = req.body;
+  console.log('ID recibido:', id); // <-- LOG para ver el ID recibido
   if (!id) return res.status(400).json({ error: 'Falta el id de la ruta' });
 
   try {
-    await db.collection('rutas').doc(id).update({ estado: 'concluido' });
+    const ref = db.collection('rutas').doc(id);
+    const doc = await ref.get();
+    if (!doc.exists) {
+      console.log('Documento NO existe:', id); // <-- LOG si no existe
+      return res.status(404).json({ error: 'Documento no encontrado' });
+    }
+    await ref.update({ estado: 'concluido' });
+    console.log('Documento actualizado:', id); // <-- LOG si se actualiza
     return res.json({ success: true, message: 'Ruta actualizada a concluido' });
   } catch (err) {
+    console.error('Error al actualizar:', err); // <-- LOG del error real
     return res.status(500).json({ error: 'No se pudo actualizar la ruta', details: err.message });
   }
 });
