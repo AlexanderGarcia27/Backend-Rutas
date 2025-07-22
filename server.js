@@ -18,7 +18,7 @@ if (!admin.apps.length) {
 const db = admin.firestore();
 
 app.post('/alerta-desvio', async (req, res) => {
-  const { emailDestino, emailOrigen, ubicacionActual } = req.body;
+  const { emailDestino, emailOrigen, ubicacionActual, mensajePersonalizado } = req.body;
 
   let transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -31,8 +31,8 @@ app.post('/alerta-desvio', async (req, res) => {
   const mailOptions = {
     from: process.env.EMAIL_USER,
     to: emailOrigen,
-    subject: '¡Alerta de desvío!',
-    text: `El usuario ${emailDestino} se ha desviado de la ruta. Última ubicación: ${JSON.stringify(ubicacionActual)}`
+    subject: 'Alerta de ruta',
+    text: mensajePersonalizado || `El usuario ${emailDestino} se ha desviado de la ruta. Última ubicación: ${JSON.stringify(ubicacionActual)}`
   };
 
   try {
