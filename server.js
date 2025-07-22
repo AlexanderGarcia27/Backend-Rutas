@@ -19,12 +19,13 @@ const db = admin.firestore();
 
 app.post('/alerta-desvio', async (req, res) => {
   const { emailDestino, emailOrigen, ubicacionActual, mensajePersonalizado } = req.body;
+  console.log('Recibido en /alerta-desvio:', req.body); // <-- LOG
 
   let transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      user: process.env.EMAIL_USER, // Variable de entorno
-      pass: process.env.EMAIL_PASS  // Variable de entorno
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS
     }
   });
 
@@ -37,8 +38,10 @@ app.post('/alerta-desvio', async (req, res) => {
 
   try {
     await transporter.sendMail(mailOptions);
+    console.log('Correo enviado a:', emailOrigen); // <-- LOG
     res.status(200).send({ ok: true });
   } catch (err) {
+    console.error('Error al enviar correo:', err); // <-- LOG
     res.status(500).send({ error: err.message });
   }
 });
